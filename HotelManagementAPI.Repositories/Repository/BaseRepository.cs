@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using HotelManagementAPI.DataModels;
 using HotelManagementAPI.Repositories.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,11 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     public async Task<T?> GetByIdAsync(Guid Id, CancellationToken ct = default)
     {
         return await _entities.Where(x => x.IsDeleted == false && x.UUID == Id).FirstOrDefaultAsync(ct);
+    }
+
+    public async Task<List<T?>> GetByFilter(Expression<Func<T, bool>> filter)
+    {
+        return await _entities.Where(filter).ToListAsync();
     }
 
     public async Task<T?> GetByIdNoTrackingAsync(Guid Id, CancellationToken ct = default)

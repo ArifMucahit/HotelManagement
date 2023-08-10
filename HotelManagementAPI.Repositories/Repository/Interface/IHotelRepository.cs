@@ -5,5 +5,4 @@ namespace HotelManagementAPI.Repositories.Repository.Interface;
 
 public interface IHotelRepository : IBaseRepository<Hotel>
 {
-    
 }

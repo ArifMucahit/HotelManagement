@@ -9,15 +9,17 @@ namespace HotelManagementAPI.Services;
 public class HotelService : IHotelService
 {
     private IHotelRepository _hotelRepository;
+    private IContactInfoRepository _contactInfoRepository;
     private ICacheManager _cache;
     private IMapper _mapper;
     private string _cacheTemplate = "{0}-hotel";
 
-    public HotelService(IHotelRepository hotelRepository, ICacheManager cache, IMapper mapper)
+    public HotelService(IHotelRepository hotelRepository, ICacheManager cache, IMapper mapper, IContactInfoRepository contactInfoRepository)
     {
         _hotelRepository = hotelRepository;
         _cache = cache;
         _mapper = mapper;
+        _contactInfoRepository = contactInfoRepository;
     }
 
     public async Task<HotelDTO> AddHotelAsync(HotelSaveRequest hotel, CancellationToken ct = default)
@@ -30,15 +32,17 @@ public class HotelService : IHotelService
         return inserted;
     }
 
-    public async Task<HotelDTO> GetHotelByIDAsync(string id, CancellationToken ct = default)
+    public async Task<HotelDetails> GetHotelByIDAsync(string id, CancellationToken ct = default)
     { //TODO include contact info!!!!
         var key = string.Format(_cacheTemplate, id);
         var hotel = await _cache.GetOrAdd(key, async () =>
         {
-            var domainHotel = await _hotelRepository.GetByIdAsync(Guid.Parse(id), ct);
-            return _mapper.Map<HotelDTO>(domainHotel);
+            var hotel =  await _hotelRepository.GetByIdAsync(Guid.Parse(id), ct);
+            var contact = await _contactInfoRepository.GetByFilter(x => x.HotelId == hotel.UUID);
+            var result = _mapper.Map<HotelDetails>(hotel);
+            result.ContactInfos = _mapper.Map<List<HotelContactInfo>>(contact);
+            return result;
         });
-
         return hotel;
     }
 

@@ -10,6 +10,9 @@ public class MapperConfiguration : Profile
     {
         CreateMap<HotelDTO, Hotel>().ReverseMap();
         CreateMap<HotelSaveRequest, Hotel>().ReverseMap();
+
+        CreateMap<HotelDetails, Hotel>().ReverseMap();
+        CreateMap<HotelContactInfo, ContactInfo>().ReverseMap();
         
         CreateMap<ContactDto, ContactInfo>().ReverseMap();
         CreateMap<ContactSaveRequest, ContactInfo>().ReverseMap();
