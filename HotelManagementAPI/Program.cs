@@ -27,6 +27,8 @@ var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new HotelManag
 
 services.AddSingleton(mappingConfig.CreateMapper());
 
+services.Configure<RedisConfiguration>(builder.Configuration.GetSection("Redis"));
+
 services.AddSingleton<IConnectionMultiplexer>(x =>
 {
     var redisConfig = x.GetRequiredService<IOptions<RedisConfiguration>>().Value;
@@ -53,6 +55,8 @@ services.AddTransient<IContactInfoRepository, ContactInfoRepository>();
 
 
 services.AddTransient<IHotelService, HotelService>();
+services.AddTransient<IManagerService, ManagerService>();
+services.AddTransient<IContactService, ContactService>();
 
 
 var app = builder.Build();

@@ -11,7 +11,7 @@ public class HotelService : IHotelService
     private IHotelRepository _hotelRepository;
     private ICacheManager _cache;
     private IMapper _mapper;
-    private string _cacheTemplate = "{id}-hotel";
+    private string _cacheTemplate = "{0}-hotel";
 
     public HotelService(IHotelRepository hotelRepository, ICacheManager cache, IMapper mapper)
     {
@@ -26,7 +26,7 @@ public class HotelService : IHotelService
 
         var inserted = _mapper.Map<HotelDTO>(await _hotelRepository.Insert(domainHotel, ct));
 
-        _cache.AddAsync(string.Format(_cacheTemplate,inserted.UUID), inserted );
+        _cache.AddAsync(string.Format(_cacheTemplate,inserted.UUID.ToString()), inserted );
         return inserted;
     }
 

@@ -19,7 +19,7 @@ public class ContactController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddContactInfo(ContactSaveRequest contact)
     {
-        var contactInfo = _contactService.AddContactInfoAsync(contact, HttpContext.RequestAborted);
+        var contactInfo = await _contactService.AddContactInfoAsync(contact, HttpContext.RequestAborted);
         return Ok(contactInfo);
     }
 
@@ -29,5 +29,12 @@ public class ContactController : ControllerBase
     {
         await _contactService.RemoveContactInfoAsync(id);
         return NoContent();
+    }
+
+    [HttpGet("list")]
+    public async Task<IActionResult> GetContactList(int pageNumber, int pageSize)
+    {
+        var result = await _contactService.GetContactList(pageNumber, pageSize);
+        return Ok(result);
     }
 }

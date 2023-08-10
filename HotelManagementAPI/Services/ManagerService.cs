@@ -11,14 +11,13 @@ public class ManagerService : IManagerService
     private IHotelManagerRepository _managerRepository;
     private ICacheManager _cache;
     private IMapper _mapper;
-    private string _cacheTemplate = "{id}-manager";
+    private string _cacheTemplate = "{0}-manager";
 
-    public ManagerService(IHotelManagerRepository managerRepository, ICacheManager cache, IMapper mapper, string cacheTemplate)
+    public ManagerService(IHotelManagerRepository managerRepository, ICacheManager cache, IMapper mapper)
     {
         _managerRepository = managerRepository;
         _cache = cache;
         _mapper = mapper;
-        _cacheTemplate = cacheTemplate;
     }
 
     public async Task<ManagerDto> AddManagerAsync(ManagerSaveRequest manager, CancellationToken ct = default)
@@ -26,7 +25,7 @@ public class ManagerService : IManagerService
         var domainManager = _mapper.Map<HotelManagers>(manager);
 
         var inserted = _mapper.Map<ManagerDto>( await _managerRepository.Insert(domainManager));
-        _cache.AddAsync(string.Format(_cacheTemplate, inserted.UUID), inserted);
+        _cache.AddAsync(string.Format(_cacheTemplate, inserted.UUID.ToString()), inserted);
         return inserted;
     }
 

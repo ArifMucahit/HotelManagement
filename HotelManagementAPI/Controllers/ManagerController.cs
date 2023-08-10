@@ -26,7 +26,7 @@ public class ManagerController : ControllerBase
     [HttpGet("list")]
     public async Task<IActionResult> ListManagersAsync(int pageNumber, int pageSize)
     {
-        var managers = _managerService.ListManagersAsync(pageNumber, pageSize);
+        var managers = await _managerService.ListManagersAsync(pageNumber, pageSize);
         return Ok(managers);
     }
     

@@ -15,13 +15,7 @@ public class HotelController : ControllerBase
     {
         _hotelService = hotelService;
     }
-
-    public IActionResult Index()
-    {
-        return Ok();
-    }
-
-
+    
     [HttpPost]
     public async Task<IActionResult> SaveHotel(HotelSaveRequest hotel)
     {

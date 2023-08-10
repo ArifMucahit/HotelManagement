@@ -11,14 +11,13 @@ public class ContactService : IContactService
     private IContactInfoRepository _contactRepository;
     private ICacheManager _cache;
     private IMapper _mapper;
-    private string _cacheTemplate = "{id}-contact";
+    private string _cacheTemplate = "{0}-contact";
 
-    public ContactService(IContactInfoRepository contactRepository, ICacheManager cache, IMapper mapper, string cacheTemplate)
+    public ContactService(IContactInfoRepository contactRepository, ICacheManager cache, IMapper mapper)
     {
         _contactRepository = contactRepository;
         _cache = cache;
         _mapper = mapper;
-        _cacheTemplate = cacheTemplate;
     }
 
     public async Task<ContactDto> AddContactInfoAsync(ContactSaveRequest contact, CancellationToken ct = default)
@@ -39,4 +38,9 @@ public class ContactService : IContactService
         _cache.Remove(key);
     }
 
+    public async Task<List<ContactDto>> GetContactList(int pageNumber, int pageSize, CancellationToken ct = default)
+    {
+        var contacts = await _contactRepository.GetAllAsync(pageNumber, pageSize, ct);
+        return _mapper.Map<List<ContactDto>>(contacts);
+    }
 }
