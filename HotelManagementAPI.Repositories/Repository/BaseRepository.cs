@@ -15,14 +15,14 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
         _entities = context.Set<T>();
     }
 
-    public async Task<T?> GetByIdAsync(int Id, CancellationToken ct = default)
+    public async Task<T?> GetByIdAsync(Guid Id, CancellationToken ct = default)
     {
-        return await _entities.Where(x => x.IsDeleted == false && x.Id == Id).FirstOrDefaultAsync(ct);
+        return await _entities.Where(x => x.IsDeleted == false && x.UUID == Id).FirstOrDefaultAsync(ct);
     }
 
-    public async Task<T?> GetByIdNoTrackingAsync(int Id, CancellationToken ct = default)
+    public async Task<T?> GetByIdNoTrackingAsync(Guid Id, CancellationToken ct = default)
     {
-        var entity = await _entities.AsNoTracking().Where(x => x.IsDeleted == false && x.Id == Id)
+        var entity = await _entities.AsNoTracking().Where(x => x.IsDeleted == false && x.UUID == Id)
             .FirstOrDefaultAsync(ct);
         return entity;
     }
@@ -69,7 +69,8 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
             throw new ArgumentNullException(nameof(entity));
         }
 
-        _entities.Remove(entity);
+        entity.IsDeleted = true;
+        _entities.Update(entity);
         await _context.SaveChangesAsync(ct);
     }
 
