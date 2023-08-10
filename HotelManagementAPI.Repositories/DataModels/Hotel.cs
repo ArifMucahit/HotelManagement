@@ -10,7 +10,6 @@ public class Hotel : BaseEntity
         ContactInfos = new HashSet<ContactInfo>();
     }
     
-    public int Id { get; set; }
     public Guid UUID { get; set; }
     [MaxLength(255)]
     public string Name { get; set; }
