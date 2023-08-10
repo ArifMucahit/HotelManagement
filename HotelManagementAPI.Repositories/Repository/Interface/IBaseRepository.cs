@@ -1,11 +1,13 @@
+using System.Linq.Expressions;
 using HotelManagementAPI.DataModels;
 
 namespace HotelManagementAPI.Repositories.Repository.Interface;
 
 public interface IBaseRepository<T> where T : BaseEntity 
 {
-    Task<T?> GetByIdAsync(int Id, CancellationToken ct = default);
-    Task<T?> GetByIdNoTrackingAsync(int id, CancellationToken ct = default);
+    Task<T?> GetByIdAsync(Guid Id, CancellationToken ct = default);
+    Task<List<T?>> GetByFilter(Expression<Func<T, bool>> filter);
+    Task<T?> GetByIdNoTrackingAsync(Guid id, CancellationToken ct = default);
     Task<List<T>> GetAllAsync(int pageNumber, int pageSize, CancellationToken ct = default);
     Task<List<T>> GetAllAsync(CancellationToken ct = default);
     Task<T> Insert(T entity, CancellationToken ct = default);

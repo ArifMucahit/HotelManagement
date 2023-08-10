@@ -2,10 +2,9 @@ namespace HotelManagementAPI.DataModels;
 
 public class ContactInfo : BaseEntity
 {
-    public Guid UUID { get; set; }
     public ContactType ContactType { get; set; }
     public string ContactAddress { get; set; }
-    public int HotelId { get; set; }
+    public Guid HotelId { get; set; }
 }
 
 public enum ContactType
