@@ -20,16 +20,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
-app.UseHttpsRedirection();
 
 var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new HotelManagementAPI.Models.Mapper.MapperConfiguration()); });
 
@@ -63,7 +55,15 @@ services.AddTransient<IContactInfoRepository, ContactInfoRepository>();
 services.AddTransient<IHotelService, HotelService>();
 
 
+var app = builder.Build();
 
+app.UseHttpsRedirection();
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseCustomExceptionHandler();
 app.UseAuthorization();
