@@ -61,4 +61,10 @@ public class HotelService : IHotelService
 
         return _mapper.Map<List<HotelDTO>>(hotelList);
     }
+
+    public async Task<List<ReportDto>> GetHotelReport()
+    {
+        var report = await _hotelRepository.GetHotelReport();
+        return report;
+    }
 }

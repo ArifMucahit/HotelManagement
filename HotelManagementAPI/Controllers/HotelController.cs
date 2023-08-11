@@ -43,4 +43,11 @@ public class HotelController : ControllerBase
         var hotels = await _hotelService.GetHotelList(pageNumber, pageSize);
         return Ok(hotels);
     }
+
+    [HttpGet("report")]
+    public async Task<IActionResult> GetHotelReport()
+    {
+        var report = await _hotelService.GetHotelReport();
+        return Ok(report);
+    }
 }
