@@ -31,6 +31,8 @@ public class ReportController : ControllerBase
     [HttpGet("list")]
     public async Task<IActionResult> GetReportList()
     {
-        return Ok();
+        var reports = await _reportService.GetList();
+        
+        return Ok(reports);
     }
 }

@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ReportManagementAPI.Models;
 using ReportManagementAPI.Repositories;
@@ -15,6 +16,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var services = builder.Services;
+
+
+
+var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new ReportManagementAPI.Models.Mapper.MapperConfiguration() ); });
+
+services.AddSingleton(mappingConfig.CreateMapper());
 
 services.Configure<RabbitMqConfiguration>(builder.Configuration.GetSection("RabbitConf"));
 
