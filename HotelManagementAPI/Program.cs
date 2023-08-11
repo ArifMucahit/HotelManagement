@@ -28,7 +28,9 @@ var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new HotelManag
 services.AddSingleton(mappingConfig.CreateMapper());
 
 services.Configure<RedisConfiguration>(builder.Configuration.GetSection("Redis"));
+services.Configure<ElasticsearchOptions>(builder.Configuration.GetSection("Elastic"));
 
+services.AddSingleton<ILogManager, LogManager>();
 services.AddSingleton<IConnectionMultiplexer>(x =>
 {
     var redisConfig = x.GetRequiredService<IOptions<RedisConfiguration>>().Value;
@@ -69,7 +71,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCustomExceptionHandler();
+app.UseMiddleware<ExceptionHandler>();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -1,12 +1,11 @@
 using System.ComponentModel.DataAnnotations;
-using HotelManagementAPI.Models;
-using HotelManagementAPI.Models.DTO;
-using HotelManagementAPI.Services.Interface;
 using Microsoft.AspNetCore.Diagnostics;
+using ReportManagementAPI.Models;
+using ReportManagementAPI.Services.Interface;
 
-namespace HotelManagementAPI.Middlewares;
+namespace ReportManagementAPI.Middleware;
 
-public class ExceptionHandler
+public  class ExceptionHandler
 {
     private ILogManager _log;
     private RequestDelegate _next;
