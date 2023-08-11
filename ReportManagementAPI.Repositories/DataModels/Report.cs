@@ -10,5 +10,6 @@ public enum ReportState
 {
     Requested,
     InProgress,
-    Done
+    Done,
+    Failed
 }

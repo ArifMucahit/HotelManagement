@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using ReportManagementAPI.Models;
+using ReportManagementAPI.Repositories.DataModels;
 using ReportManagementAPI.Services.Interface;
 
 namespace ReportManagementAPI.Services;
@@ -59,21 +60,24 @@ public class QueueConsumer : BackgroundService
     {
         var uuid = Encoding.UTF8.GetString(e.Body.ToArray()).Replace("\"","");
 
+        await _reportService.UpdateReportState(uuid, ReportState.InProgress);
         var path = await ReadReportData(uuid);
         if (path == null)
+        {
             _channel.BasicNack(e.DeliveryTag,false,false);
+            await _reportService.UpdateReportState(uuid, ReportState.Failed);
+        }
+        else
+        {
+            await _reportService.UpdateReportPath(uuid, path);
+            _channel.BasicAck(e.DeliveryTag, false);
+        }
+    }
 
-         UpdateReportRequest(uuid, path);
-        _channel.BasicAck(e.DeliveryTag, false);
-    }
     
-    private async Task UpdateReportRequest(string uuid,string URL)
-    {
-        //TODO: update report state
-    }
     private  async Task<string> ReadReportData(string uuid)
     {
-        var data = await _httpClient.GetStringAsync(_hotelApi + "/Contact/GetLocationReport");
+        var data = await _httpClient.GetStringAsync(_hotelApi + "/Hotel/GetReport");
         if (data == null)
             return null;
         var path = uuid + ".xlsx";
