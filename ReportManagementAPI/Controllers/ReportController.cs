@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ReportManagementAPI.Models.Dto;
 using ReportManagementAPI.Services.Interface;
 
 namespace ReportManagementAPI.Controllers;
@@ -25,7 +26,8 @@ public class ReportController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> RequestReport()
     {
-        return Ok();
+        var report = await _reportService.RequestReport();
+        return Ok(report);
     }
 
     [HttpGet("list")]
@@ -34,5 +36,12 @@ public class ReportController : ControllerBase
         var reports = await _reportService.GetList();
         
         return Ok(reports);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateReport(ReportDto dto)
+    {
+        var report = _reportService.UpdateReport(dto);
+        return Ok(report);
     }
 }
