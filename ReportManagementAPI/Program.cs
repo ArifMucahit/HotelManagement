@@ -31,7 +31,7 @@ services.AddDbContext<ReportManagementContext>(opt =>
     opt.UseNpgsql(conStr));
 
 services.AddTransient<IQueueService, QueueService>();
-
+services.AddTransient<ILogManager, LogManager>();
 services.AddTransient<IReportService, ReportService>();
 
 services.AddTransient<IReportRepository, ReportRepository>();
