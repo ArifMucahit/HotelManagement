@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using ReportManagementAPI.Middleware;
 using ReportManagementAPI.Models;
 using ReportManagementAPI.Repositories;
 using ReportManagementAPI.Repositories.Repositories;
@@ -23,6 +24,8 @@ services.AddSingleton(mappingConfig.CreateMapper());
 
 services.Configure<RabbitMqConfiguration>(builder.Configuration.GetSection("RabbitConf"));
 
+services.Configure<ElasticsearchOptions>(builder.Configuration.GetSection("Elastic"));
+
 var conStr = builder.Configuration.GetConnectionString("Postgres");
 services.AddDbContext<ReportManagementContext>(opt => 
     opt.UseNpgsql(conStr));
@@ -42,6 +45,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandler>();
 
 app.UseHttpsRedirection();
 

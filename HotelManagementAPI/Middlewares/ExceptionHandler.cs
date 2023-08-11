@@ -6,60 +6,69 @@ using Microsoft.AspNetCore.Diagnostics;
 
 namespace HotelManagementAPI.Middlewares;
 
-public  class ExceptionHandler
+public class ExceptionHandler
 {
     private ILogManager _log;
-    public ExceptionHandler(ILogManager log)
+    private RequestDelegate _next;
+
+    public ExceptionHandler(ILogManager log, RequestDelegate next)
     {
         _log = log;
+        _next = next;
     }
-    
-    public void CustomExceptionHandler(IApplicationBuilder app)
+
+
+    public async Task InvokeAsync(HttpContext httpContext)
     {
-        app.UseExceptionHandler(err =>
+        try
         {
-            err.Run(async context =>
-            {
-                var errorFeature = context.Features.Get<IExceptionHandlerFeature>();
-                var exception = errorFeature.Error.GetBaseException();
+            await _next(httpContext);
+        }
+        catch (Exception e)
+        {
+            CustomExceptionHandler(httpContext, e);
+        }
+    }
 
-                context.Response.Clear();
-                context.Response.ContentType = "application/json";
+    public async void CustomExceptionHandler(HttpContext context, Exception exception)
+    {
+        var errorFeature = context.Features.Get<IExceptionHandlerFeature>();
 
-                if (exception is ValidationException validationEx)
-                {
-                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                    await context.Response.WriteAsJsonAsync(new ApiErrorResponse(validationEx.Message));
-                    return;
-                }
+        context.Response.Clear();
+        context.Response.ContentType = "application/json";
 
-                if (exception is BadHttpRequestException)
-                {
-                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                    await context.Response.WriteAsJsonAsync(new ApiErrorResponse(exception.Message));
-                    return;
-                }
+        if (exception is ValidationException validationEx)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsJsonAsync(new ApiErrorResponse(validationEx.Message));
+            return;
+        }
 
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        if (exception is BadHttpRequestException)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsJsonAsync(new ApiErrorResponse(exception.Message));
+            return;
+        }
 
-                var errorMsg = exception.Message;
-                
-                _log.LogError(new ExceptionLogDto()
-                {
-                    Exception = exception,
-                    DateTime = DateTime.UtcNow,
-                    Source = "ClubForumApi"
-                });
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
+        var errorMsg = exception.Message;
 
-                var env = context.RequestServices.GetService<IWebHostEnvironment>();
-                if (env.IsDevelopment())
-                {
-                    errorMsg += $"\nStackTrace: {exception.StackTrace}";
-                }
-
-                await context.Response.WriteAsJsonAsync(new ApiErrorResponse(errorMsg));
-            });
+        _log.LogError(new ExceptionLogDto()
+        {
+            Exception = exception,
+            DateTime = DateTime.UtcNow,
+            Source = "ClubForumApi"
         });
+
+
+        var env = context.RequestServices.GetService<IWebHostEnvironment>();
+        if (env.IsDevelopment())
+        {
+            errorMsg += $"\nStackTrace: {exception.StackTrace}";
+        }
+
+        await context.Response.WriteAsJsonAsync(new ApiErrorResponse(errorMsg));
     }
 }
