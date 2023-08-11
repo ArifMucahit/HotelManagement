@@ -1,12 +1,20 @@
 using System.ComponentModel.DataAnnotations;
 using HotelManagementAPI.Models;
+using HotelManagementAPI.Models.DTO;
+using HotelManagementAPI.Services.Interface;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace HotelManagementAPI.Middlewares;
 
-public static class ExceptionHandler
+public  class ExceptionHandler
 {
-    public static void UseCustomExceptionHandler(this IApplicationBuilder app)
+    private ILogManager _log;
+    public ExceptionHandler(ILogManager log)
+    {
+        _log = log;
+    }
+    
+    public void CustomExceptionHandler(IApplicationBuilder app)
     {
         app.UseExceptionHandler(err =>
         {
@@ -35,6 +43,14 @@ public static class ExceptionHandler
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
                 var errorMsg = exception.Message;
+                
+                _log.LogError(new ExceptionLogDto()
+                {
+                    Exception = exception,
+                    DateTime = DateTime.UtcNow,
+                    Source = "ClubForumApi"
+                });
+
 
                 var env = context.RequestServices.GetService<IWebHostEnvironment>();
                 if (env.IsDevelopment())
