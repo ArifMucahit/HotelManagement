@@ -17,8 +17,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var services = builder.Services;
 
-
-
 var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new ReportManagementAPI.Models.Mapper.MapperConfiguration() ); });
 
 services.AddSingleton(mappingConfig.CreateMapper());
@@ -29,14 +27,11 @@ var conStr = builder.Configuration.GetConnectionString("Postgres");
 services.AddDbContext<ReportManagementContext>(opt => 
     opt.UseNpgsql(conStr));
 
-services.AddSingleton<IQueueService, QueueService>();
+services.AddTransient<IQueueService, QueueService>();
 
 services.AddTransient<IReportService, ReportService>();
 
 services.AddTransient<IReportRepository, ReportRepository>();
-
-
-
 
 
 var app = builder.Build();

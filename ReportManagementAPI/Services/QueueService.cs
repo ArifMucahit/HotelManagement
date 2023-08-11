@@ -35,7 +35,7 @@ public class QueueService : IQueueService
         _queueProperty.Persistent = true;
     }
     
-    public void PushQueue(object request)
+    public void PushQueue(string request)
     {
         var stringModel = JsonSerializer.Serialize(request);
         var byteModel = Encoding.UTF8.GetBytes(stringModel);
